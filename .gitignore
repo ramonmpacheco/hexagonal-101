@@ -1,0 +1,10 @@
+# Gradle
+letter-app/.gradle/
+letter-app/build/
+
+# macOS
+.DS_Store
+
+# IntelliJ / IDE
+.idea/
+*.iml

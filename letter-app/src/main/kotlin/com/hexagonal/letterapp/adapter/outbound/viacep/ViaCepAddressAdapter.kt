@@ -7,8 +7,10 @@ import org.springframework.web.client.RestClient
 
 @Component
 class ViaCepAddressAdapter(
-    private val restClient: RestClient = RestClient.create()
+    restClientBuilder: RestClient.Builder
 ) : AddressLookupPort {
+
+    private val restClient = restClientBuilder.build()
 
     override fun findByCep(cep: String, numero: String): Address {
         val cepLimpo = cep.replace("-", "").trim()
