@@ -13,12 +13,11 @@ sequenceDiagram
     User->>CTRL: POST /letters { message, cep, numero }
     CTRL->>SRV: sendLetter.send(message, cep, numero)
 
-    note over SRV: Valida: mensagem ≤ 150 chars
-
     SRV->>VIACEP: addressLookup.findByCep(cep, numero)
     VIACEP-->>SRV: Address(rua, cidade, estado...)
 
-    SRV->>PERSIST: repository.save(letter)
+    SRV->>PERSIST: repository.save(Letter(...))
+    note over PERSIST: Letter valida internamente no init
     PERSIST-->>SRV: Letter (com id gerado)
 
     SRV-->>CTRL: Letter
@@ -49,7 +48,7 @@ graph LR
     end
 
     subgraph DOMAIN["Domínio — a fronteira que não vaza"]
-        SRV["SendLetterService\n✅ valida mensagem\n✅ monta a carta"]
+        SRV["SendLetterService\n✅ orquestra o fluxo\nLetter\n✅ valida mensagem"]
     end
 
     subgraph EXTERNAL_OUT["Mundo externo (saída)"]

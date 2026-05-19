@@ -43,7 +43,7 @@ Sem banco. Sem HTTP. Sem Spring. Roda em milissegundos.
 | ViaCEP → API dos Correios | Só o `ViaCepAddressAdapter` |
 | REST → GraphQL | Só o adapter inbound |
 | H2 → Redis | Só o `LetterPersistenceAdapter` |
-| **Regra dos 150 chars** | **Só o `SendLetterService`** |
+| **Regra dos 150 chars** | **Só a entidade `Letter`** |
 
 Cada mudança fica isolada no seu adapter. O domínio não sente.
 

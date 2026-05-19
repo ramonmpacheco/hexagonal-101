@@ -28,7 +28,24 @@ interface LetterRepository {
 }
 ```
 
-E usa essa interface no seu serviço:
+As regras de negócio ficam dentro da própria entidade:
+
+```kotlin
+data class Letter(
+    val id: Long? = null,
+    val message: String,
+    val address: Address
+) {
+    init {
+        require(message.isNotBlank()) { "Mensagem não pode ser vazia" }
+        require(message.length <= 150) { "Mensagem não pode ter mais de 150 caracteres" }
+    }
+}
+```
+
+É impossível criar uma `Letter` inválida — em qualquer parte do sistema.
+
+O serviço de aplicação só orquestra, sem repetir regras:
 
 ```kotlin
 class SendLetterService(
@@ -37,10 +54,8 @@ class SendLetterService(
 ) : SendLetterUseCase {
 
     override fun send(message: String, cep: String, numero: String): Letter {
-        require(message.length <= 150) { "Mensagem não pode ter mais de 150 caracteres" }
         val address = addressLookup.findByCep(cep, numero)
-        val letter = Letter(message = message, address = address)
-        return repository.save(letter)
+        return repository.save(Letter(message = message, address = address))
     }
 }
 ```

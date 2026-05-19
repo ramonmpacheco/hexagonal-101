@@ -19,7 +19,7 @@ graph TB
     subgraph DOMAIN["Domínio"]
         direction TB
         UC["Porta Inbound\nSendLetterUseCase"]
-        SRV["SendLetterService\n• valida 150 chars\n• monta Letter"]
+        SRV["SendLetterService\n• orquestra o fluxo"]
         REPO_PORT["Porta Outbound\nLetterRepository"]
         ADDR_PORT["Porta Outbound\nAddressLookupPort"]
         UC --> SRV
@@ -55,10 +55,16 @@ data class Letter(
     val id: Long? = null,
     val message: String,
     val address: Address
-)
+) {
+    init {
+        require(message.isNotBlank()) { "Mensagem não pode ser vazia" }
+        require(message.length <= 150) { "Mensagem não pode ter mais de 150 caracteres" }
+    }
+}
 ```
 
 Sem anotações de banco. Sem anotações de JSON. Kotlin puro.
+As regras de negócio vivem na entidade — é impossível criar uma `Letter` inválida.
 
 ---
 
@@ -86,8 +92,8 @@ interface LetterRepository {
 
 | Regra | Onde fica |
 |---|---|
-| Mensagem ≤ 150 caracteres | `SendLetterService` |
-| Carta precisa de endereço completo | `SendLetterService` |
+| Mensagem ≤ 150 caracteres | Entidade `Letter` (init) |
+| Carta precisa de endereço completo | Entidade `Letter` (init) |
 | `Letter` tem `message` e `address` | Entidade `Letter` |
 
 Nenhuma dessas regras está no controller, no adapter ou no banco.
